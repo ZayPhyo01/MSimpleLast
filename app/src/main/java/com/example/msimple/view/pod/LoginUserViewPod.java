@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 
 import com.example.msimple.R;
+import com.example.msimple.data.model.UserModel;
+import com.example.msimple.data.model.UserModelImpl;
 import com.example.msimple.data.vos.LoginUserVO;
 
 import butterknife.BindView;
@@ -39,16 +41,17 @@ public class LoginUserViewPod extends RelativeLayout {
         super(context, attrs, defStyleAttr);
     }
 
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-
         ButterKnife.bind(this, this);
+        tvName.setText(UserModelImpl.getInstance(getContext()).getLoginUser().getEmail());
+        tvPhoneNo.setText(UserModelImpl.getInstance(getContext()).getLoginUser().getName());
     }
 
     public void setData(LoginUserVO loginUser) {
-        tvName.setText(loginUser.getName());
-        tvPhoneNo.setText(loginUser.getPhoneNo());
+
 
 
     }

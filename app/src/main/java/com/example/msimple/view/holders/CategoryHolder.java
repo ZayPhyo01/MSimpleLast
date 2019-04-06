@@ -8,22 +8,27 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.msimple.Delegate.OnClickItem;
 import com.example.msimple.R;
 import com.example.msimple.adapter.ProgramAdapter;
 import com.example.msimple.data.vos.CategoryVO;
+import com.example.msimple.data.vos.ProgramVO;
 
 public class CategoryHolder extends BaseHolder<CategoryVO> {
 
 RecyclerView recyclerView;
 ProgramAdapter programAdapter;
-
-    public CategoryHolder(@NonNull View itemView) {
+OnClickItem onClickItem;
+    public CategoryHolder(@NonNull View itemView, final OnClickItem onClickItem) {
         super(itemView);
+        this.onClickItem = onClickItem;
         recyclerView = itemView.findViewById(R.id.rv_category_program);
-        programAdapter = new ProgramAdapter();
+        programAdapter = new ProgramAdapter(onClickItem);
         recyclerView.setAdapter(programAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(),LinearLayoutManager.HORIZONTAL,false));
+
     }
+
 
 
     @Override
@@ -32,6 +37,8 @@ ProgramAdapter programAdapter;
         programAdapter.setNewData(data.getPrograms());
 
     }
+
+
 
 
 

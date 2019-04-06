@@ -1,20 +1,19 @@
-package com.example.msimple;
+package com.example.msimple.activitiy;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 
 import com.example.msimple.Delegate.OnClickItem;
-import com.example.msimple.activitiy.BaseActivity;
+import com.example.msimple.R;
 import com.example.msimple.adapter.CategoryAdapter;
 import com.example.msimple.adapter.TopicsAdapter;
 import com.example.msimple.data.model.CategoryModel;
@@ -23,6 +22,7 @@ import com.example.msimple.data.model.ITopicModel;
 import com.example.msimple.data.model.TopicModel;
 import com.example.msimple.data.model.UserModelImpl;
 import com.example.msimple.data.vos.CategoryVO;
+import com.example.msimple.data.vos.ProgramVO;
 import com.example.msimple.data.vos.TopicVO;
 import com.example.msimple.view.pod.LoginUserViewPod;
 
@@ -30,6 +30,7 @@ import java.util.List;
 
 public class MainActivity extends BaseActivity implements OnClickItem {
 
+    LoginUserViewPod viewPod;
     RecyclerView mCategoryList;
     CategoryModel mCategoryModel;
     CategoryAdapter categoryAdapter;
@@ -38,11 +39,11 @@ public class MainActivity extends BaseActivity implements OnClickItem {
     RecyclerView mTopicList;
     BottomNavigationView bottomNavigationView;
     UserModelImpl userModel;
+    AlertDialog alertDialog;
 
 
-
-    public static Intent newIntent(Context context){
-        Intent intent = new Intent(context,MainActivity.class);
+    public static Intent newIntent(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
         return intent;
 
 
@@ -53,8 +54,8 @@ public class MainActivity extends BaseActivity implements OnClickItem {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mCategoryModel = CategoryModel.getInstance();
-        categoryAdapter = new CategoryAdapter();
-        topicModel  = TopicModel.getInstance();
+        categoryAdapter = new CategoryAdapter(this);
+        topicModel = TopicModel.getInstance();
         topicsAdapter = new TopicsAdapter();
         mTopicList = findViewById(R.id.rv_topics);
         mTopicList.setAdapter(topicsAdapter);
@@ -69,27 +70,32 @@ public class MainActivity extends BaseActivity implements OnClickItem {
         mCategoryList.setNestedScrollingEnabled(false);
         userModel = UserModelImpl.getInstance(this);
 
+        Log.d("UserModel", userModel.getLoginUser().getEmail());
+       viewPod  = new LoginUserViewPod(MainActivity.this);
+
+
+        alertDialog = new AlertDialog.Builder(MainActivity.this)
+                .setTitle("User Profile")
+                .setView(LayoutInflater.from(this).inflate(R.layout.view_pod_login_user, null, false))
+                .create();
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-               LoginUserViewPod viewPod = new LoginUserViewPod(MainActivity.this);
 
                 int id = menuItem.getItemId();
-                switch (id){
+                switch (id) {
                     case R.id.action_home:
-                        Log.d("Now you ","at home");
+                        Log.d("Now you ", "at home");
                         break;
                     case R.id.action_profile:
 
-                        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
-                                .create();
+
                         alertDialog.show();
 
                         break;
                     case R.id.action_menu:
                         break;
-
 
                 }
                 return true;
@@ -100,15 +106,25 @@ public class MainActivity extends BaseActivity implements OnClickItem {
     }
 
     @Override
-    public void onTap(int i) {
-
+    protected void onStart() {
+        super.onStart();
+        viewPod.setData(userModel.getLoginUser());
     }
 
-    public void loadFromModel(){
+    @Override
+    public void onTap(ProgramVO programVO) {
+        Log.d("Pos : ", programVO.getTitle() + "");
+
+        Intent intent = DetailActivity.newIntent(this);
+        intent.putExtra("programId",programVO.getProgramId());
+        startActivity(intent);
+    }
+
+    public void loadFromModel() {
         mCategoryModel.getCategory(new ICategoryModel.Response() {
             @Override
             public void onSuccess(List<CategoryVO> categoryVO) {
-                Log.d("MainActivity",categoryVO.get(0).getTitle());
+                Log.d("MainActivity", categoryVO.get(0).getTitle());
                 categoryAdapter.setNewData(categoryVO);
             }
 
@@ -121,8 +137,8 @@ public class MainActivity extends BaseActivity implements OnClickItem {
         topicModel.getTopic(new ITopicModel.Response() {
             @Override
             public void onSuccess(List<TopicVO> topicVOS) {
-                Log.d("Topic list ","size "+topicVOS.size());
-            topicsAdapter.setNewData(topicVOS);
+                Log.d("Topic list ", "size " + topicVOS.size());
+                topicsAdapter.setNewData(topicVOS);
             }
 
             @Override

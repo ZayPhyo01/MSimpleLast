@@ -1,7 +1,9 @@
 package com.example.msimple.Delegate;
 
-public interface OnClickItem {
+import com.example.msimple.data.vos.ProgramVO;
 
-    void onTap(int i);
+public interface OnClickItem{
+
+    void onTap(ProgramVO programVO);
 
 }

@@ -8,12 +8,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.msimple.Delegate.LoginDelegate;
-import com.example.msimple.MainActivity;
 import com.example.msimple.R;
-import com.example.msimple.data.model.UserModel;
 import com.example.msimple.data.model.UserModelImpl;
 import com.example.msimple.data.vos.LoginUserVO;
 
